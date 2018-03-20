@@ -2,6 +2,8 @@
 
 namespace Varhall\Securino\Presenters\Plugins;
 
+use Varhall\Restino\Presenters\Plugins\Plugin;
+
 
 /**
  * Security plugin which checks user's authentication status
