@@ -3,6 +3,7 @@
 namespace Varhall\Securino\Presenters\Plugins;
 
 use Varhall\Restino\Presenters\Plugins\Plugin;
+use Varhall\Restino\Presenters\RestRequest;
 
 
 /**
@@ -12,9 +13,11 @@ use Varhall\Restino\Presenters\Plugins\Plugin;
  */
 class AuthenticationPlugin extends Plugin
 {
-    protected function handle(array &$data, \Nette\Application\UI\Presenter $presenter, $method)
+    protected  function handle(RestRequest $request, ...$args)
     {
-        if (!$presenter->user->isLoggedIn())
+        if (!$request->getPresenter()->user->isLoggedIn())
             return $this->terminate('User is not authenticated', \Nette\Http\Response::S401_UNAUTHORIZED);
+
+        return $request->next();
     }
 }
