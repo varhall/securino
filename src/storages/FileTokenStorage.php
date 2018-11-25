@@ -16,11 +16,19 @@ class FileTokenStorage implements ITokenStorage
     }
 
 
-    public function save($id, $token)
+    public function save($id, $token, $data)
     {
         $tokens = $this->readStorageFile();
 
-        $tokens[$id] = $token;
+        $values = [
+            'id'            => $id,
+            'user_id'       => $data['data']['id'],
+            'token'         => $token,
+            'valid_until'   => $data['exp'],
+            'data'          => $data
+        ];
+
+        $tokens[$id] = $values;
         $this->writeTokenStorageFile($tokens);
     }
 
@@ -54,7 +62,7 @@ class FileTokenStorage implements ITokenStorage
 
     protected function isActiveToken($token)
     {
-        return empty($token['exp']) || intval($token['exp']) >= time();
+        return empty($token['valid_until']) || intval($token['valid_until']) >= time();
     }
 
     /**

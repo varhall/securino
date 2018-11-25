@@ -4,7 +4,7 @@ namespace Varhall\Securino\Storages;
 
 interface ITokenStorage
 {
-    public function save($id, $token);
+    public function save($id, $token, $data);
 
     public function get($id);
 

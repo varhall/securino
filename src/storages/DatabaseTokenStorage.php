@@ -3,19 +3,28 @@
 namespace Varhall\Securino\Storages;
 
 
+use Nette\Utils\DateTime;
 use Varhall\Securino\Models\Token;
 
 class DatabaseTokenStorage implements ITokenStorage
 {
 
-    public function save($id, $token)
+    public function save($id, $token, $data)
     {
         $obj = Token::find($id);
 
+        $values = [
+            'id'            => $id,
+            'user_id'       => $data['data']['id'],
+            'token'         => $token,
+            'valid_until'   => DateTime::from($data['exp']),
+            'data'          => $data
+        ];
+
         if (!$obj)
-            Token::create($token);
+            Token::create($values);
         else
-            $obj->update($token);
+            $obj->update($values);
 
         $this->clean();
     }
@@ -29,7 +38,7 @@ class DatabaseTokenStorage implements ITokenStorage
     {
         $token = $this->get($id);
 
-        return $token && $token->exp >= time();
+        return $token && $token->valid_until >= new DateTime();
     }
 
     public function destroy($id)
@@ -44,6 +53,6 @@ class DatabaseTokenStorage implements ITokenStorage
 
     protected function clean()
     {
-        Token::where('exp < ?', time())->delete();
+        Token::where('valid_until < ?', new DateTime())->delete();
     }
 }

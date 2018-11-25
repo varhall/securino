@@ -156,9 +156,10 @@ class JwtStorage implements \Nette\Security\IUserStorage
             ]
         ];
 
-        $this->tokenStorage->save($data['jti'], $data);
+        $token = JWT::encode($data, $this->key, $this->algorithm);
+        $this->tokenStorage->save($data['jti'], $token, $data);
 
-        return JWT::encode($data, $this->key, $this->algorithm);
+        return $token;
     }
 
     protected function deserializeToken()
