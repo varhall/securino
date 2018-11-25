@@ -13,19 +13,13 @@ use Varhall\Restino\Presenters\RestRequest;
  */
 class AuthorizationPlugin extends Plugin
 {
-    protected  function handle(RestRequest $request, ...$args)
+    protected function handle(RestRequest $request, $user)
     {
-        if (!$request->getPresenter()->user->isLoggedIn())
-            $this->terminate('User is not authenticated', \Nette\Http\Response::S401_UNAUTHORIZED);
+        $class = $this->presenterCall($request->getPresenter(), 'modelClass');
 
-        $this->checkPermission($request->getPresenter(), $request->method);
+        if ($user->cant($request->method, !!$request->id ? $class::find($request->id) : $class))
+            return $this->terminate('Operation is not allowed', Response::S403_FORBIDDEN);
 
         return $request->next();
-    }
-
-    protected function checkPermission(\Nette\Application\UI\Presenter $presenter, $method)
-    {
-        if (!$presenter->user->isAllowed($presenter->getRequest()->getPresenterName(), $method))
-            return $this->terminate('Method is not allowed', \Nette\Http\Response::S403_FORBIDDEN);
     }
 }
