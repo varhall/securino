@@ -2,6 +2,8 @@
 
 namespace Varhall\Securino\DI;
 
+use Nette\DI\Config\Helpers;
+
 /**
  * Description of SecurinoExtension
  *
@@ -12,7 +14,7 @@ class SecurinoExtension extends \Nette\DI\CompilerExtension
     protected function configuration()
     {
         $builder = $this->getContainerBuilder();
-        return $this->getConfig([
+        return Helpers::merge($this->getConfig(), [
             'storage'           => '\Varhall\Securino\Storages\BlackholeTokenStorage',
             'expiration'        => '7 days',
             'algorithm'         => 'HS256'
