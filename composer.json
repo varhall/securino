@@ -17,19 +17,18 @@
 
 	"require": {
 		"php": ">=7.2.0",
-		"nette/utils": ">=2.4",
-		"nette/database": ">=2.4",
-		"nette/reflection": ">=2.3",
-		"nette/di": ">=2.4",
-		"nette/security": ">=2.4",
+		"nette/utils": ">=3.0",
+		"nette/database": ">=3.0",
+		"nette/di": ">=3.0",
+		"nette/security": ">=3.0",
+        "nette/caching": ">=3.0",
+        "nette/robot-loader": ">=3.0",
 		"firebase/php-jwt": ">=5.0"
 	},
 
 	"require-dev": {
-		"tracy/tracy": ">=2.4",
-		"nette/tester": ">=1.7",
-		"nette/caching": ">=2.5",
-		"nette/robot-loader": ">=2.4"
+		"tracy/tracy": ">=2.6",
+		"nette/tester": ">=1.7"
 	},
 
 	"autoload": {

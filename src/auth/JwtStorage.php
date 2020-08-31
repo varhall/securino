@@ -64,7 +64,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
      * @param  bool
      * @return static
      */
-    function setAuthenticated($state)
+    function setAuthenticated(bool $state)
     {
         if (!$state && $this->isAuthenticated()) {
             $this->tokenStorage->destroy($this->deserializeToken()->jti);
@@ -76,7 +76,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
      * Is this user authenticated?
      * @return bool
      */
-    function isAuthenticated()
+    function isAuthenticated(): bool
     {
         return !!$this->getIdentity();
     }
@@ -94,7 +94,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
      * Returns current user identity, if any.
      * @return \Nette\Security\IIdentity|null
      */
-    function getIdentity()
+    function getIdentity(): ?IIdentity
     {
         if (!$this->identity) {
             try {
@@ -114,7 +114,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
      * @param  int  flag IUserStorage::CLEAR_IDENTITY
      * @return static
      */
-    function setExpiration($time, $flags = 0)
+    function setExpiration(?string $time, int $flags = 0)
     {
         // TODO: flags
 
@@ -125,7 +125,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
      * Why was user logged out?
      * @return int|null
      */
-    function getLogoutReason()
+    function getLogoutReason(): ?int
     {
         // TODO: Implement getLogoutReason() method.
     }
@@ -148,8 +148,8 @@ class JwtStorage implements \Nette\Security\IUserStorage
             'iss'  => $_SERVER['SERVER_NAME'],                                                  // Issuer
             'nbf'  => $now->getTimestamp(),                                                     // Not before
             'exp'  => !empty($this->expiration)                                                 // Expire
-                            ? $now->modifyClone("+{$this->expiration}")->getTimestamp()
-                            : NULL,
+                ? $now->modifyClone("+{$this->expiration}")->getTimestamp()
+                : NULL,
             'data' => [                                                                         // Data related to the signer user
                 'id'        => $this->identity->getId(),
                 'roles'     => $this->identity->getRoles()
