@@ -49,5 +49,6 @@ class SecurinoExtension extends \Nette\DI\CompilerExtension
 
         // Disable default user storage
         $builder->getDefinition('security.userStorage')->setAutowired(false);
+        $builder->getDefinition('security.legacyUserStorage')->setAutowired(false);
     }
 }
