@@ -128,6 +128,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
     function getLogoutReason(): ?int
     {
         // TODO: Implement getLogoutReason() method.
+        return null;
     }
 
 
