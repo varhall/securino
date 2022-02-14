@@ -1,22 +1,22 @@
 {
 	"name": "varhall/securino",
 	"type": "library",
-	"description": "Varhall Security Layer",
+	"description": "Nette Security Layer",
 	"keywords": ["nette", "orm", "database"],
-	"homepage": "https://gitlab.com/varhallpub/securino",
+	"homepage": "https://github.com/varhall/securino",
 	"license": "MIT",
         "authors": [
 		{
 			"name": "Ondrej Sibrava",
-			"homepage": "http://www.varhall.cz"
+			"homepage": "https://www.varhall.cz"
 		}
 	],
 	"support": {
-		"issues": "https://gitlab.com/varhallpub/securino"
+		"issues": "https://github.com/varhall/securino"
 	},
 
 	"require": {
-		"php": ">=7.2.0",
+		"php": ">=7.4.0",
 		"nette/utils": ">=3.0",
 		"nette/database": ">=3.0",
 		"nette/di": ">=3.0",
