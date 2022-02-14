@@ -2,7 +2,7 @@
 	"name": "varhall/securino",
 	"type": "library",
 	"description": "Nette Security Layer",
-	"keywords": ["nette", "orm", "database"],
+	"keywords": ["nette", "security"],
 	"homepage": "https://github.com/varhall/securino",
 	"license": "MIT",
         "authors": [
