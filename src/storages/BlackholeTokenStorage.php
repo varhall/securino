@@ -6,7 +6,7 @@ namespace Varhall\Securino\Storages;
 class BlackholeTokenStorage implements ITokenStorage
 {
 
-    public function save($id, $token)
+    public function save($id, $token, $data)
     {
 
     }

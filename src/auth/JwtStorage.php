@@ -3,11 +3,12 @@
 namespace Varhall\Securino\Auth;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Nette\Http\Request;
 use Nette\Http\Response;
 use Nette\InvalidStateException;
-use Nette\Security\Identity;
 use Nette\Security\IIdentity;
+use Nette\Security\SimpleIdentity;
 use Nette\Utils\DateTime;
 use Varhall\Securino\Storages\ITokenStorage;
 
@@ -98,7 +99,7 @@ class JwtStorage implements \Nette\Security\IUserStorage
     {
         if (!$this->identity) {
             try {
-                $this->identity = $this->deserializeIdentity();
+                $this->identity = $this->deserializeToken();
 
             } catch (\Exception $ex) {
                 return NULL;
@@ -144,17 +145,16 @@ class JwtStorage implements \Nette\Security\IUserStorage
         $now = new DateTime();
 
         $data = [
-            'iat'  => $now->getTimestamp(),                                                     // Issued at: time when the token was generated
-            'jti'  => md5($this->identity->getId() . $now->getTimestamp()),                 // Json Token Id: an unique identifier for the token
-            'iss'  => $_SERVER['SERVER_NAME'],                                                  // Issuer
-            'nbf'  => $now->getTimestamp(),                                                     // Not before
-            'exp'  => !empty($this->expiration)                                                 // Expire
+            'iat'   => $now->getTimestamp(),                                                     // Issued at: time when the token was generated
+            'jti'   => md5($this->identity->getId() . $now->getTimestamp()),              // Json Token Id: an unique identifier for the token
+            'iss'   => $_SERVER['SERVER_NAME'],                                                  // Issuer
+            'nbf'   => $now->getTimestamp(),                                                     // Not before
+            'exp'   => !empty($this->expiration)                                                 // Expire
                 ? $now->modifyClone("+{$this->expiration}")->getTimestamp()
                 : NULL,
-            'data' => [                                                                         // Data related to the signer user
-                'id'        => $this->identity->getId(),
-                'roles'     => $this->identity->getRoles()
-            ]
+            'sub'   => $this->identity->getId(),
+            'roles' => $this->identity->getRoles(),
+            'data'  => $this->identity->getData(),
         ];
 
         $token = JWT::encode($data, $this->key, $this->algorithm);
@@ -171,36 +171,8 @@ class JwtStorage implements \Nette\Security\IUserStorage
         if (empty($token) || !preg_match('/^Bearer (.+)$/i', $token, $matches))
             throw new InvalidTokenException([], 'Missing or invalid \'Authorization\' HTTP header');
 
-        $data = JWT::decode($matches[1], $this->key, [ $this->algorithm ]);
+        $data = JWT::decode($matches[1], new Key($this->key, $this->algorithm));
 
-        $this->validateToken($data);
-
-        return $data;
-    }
-
-    protected function deserializeIdentity()
-    {
-        $token = $this->deserializeToken();
-
-        return new Identity($token->data->id, $token->data->roles, isset($token->data->data) ? $token->data->data : []);
-    }
-
-    protected function validateToken($data)
-    {
-        if (!isset($data->data))
-            throw new InvalidTokenException($data,'Missing data part');
-
-        $d = $data->data;
-
-        if (!isset($d->id))
-            throw new InvalidTokenException($data, 'Missing user ID');
-
-        if (!isset($d->roles))
-            throw new InvalidTokenException($data, 'Missing user roles');
-
-        if (!$this->tokenStorage->isActive($data->jti))
-            throw new InvalidTokenException($data, 'Token expired');
-
-        return TRUE;
+        return new SimpleIdentity($data->sub, $data->roles ?? [], (array) ($data->data ?? []));
     }
 }
